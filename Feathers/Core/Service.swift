@@ -8,7 +8,6 @@
 
 import Foundation
 import ReactiveSwift
-import Result
 
 /// Represents a subclassable Feather's service. `Service` is not to be 
 /// used by itself; it's an abstract base class for all other service to inherit from.
@@ -169,12 +168,12 @@ open class Service: ServiceType {
         }
     }
 
-    public func on(event: String) -> Signal<[String: Any], NoError> {
+    public func on(event: String) -> Signal<[String: Any], Never> {
         // no-op
         return .empty
     }
 
-    public func once(event: String) -> Signal<[String: Any], NoError> {
+    public func once(event: String) -> Signal<[String: Any], Never> {
         return .empty
     }
 

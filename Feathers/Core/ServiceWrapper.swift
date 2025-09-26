@@ -130,11 +130,11 @@ final public class ServiceWrapper: ServiceType {
         return service.hooks(for: kind)
     }
 
-    final public func on(event: String) -> Signal<[String: Any], NoError> {
+    final public func on(event: String) -> Signal<[String: Any], Never> {
         return service.on(event: event)
     }
 
-    final public func once(event: String) -> Signal<[String: Any], NoError> {
+    final public func once(event: String) -> Signal<[String: Any], Never> {
         return service.once(event: event)
     }
 

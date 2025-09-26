@@ -10,7 +10,7 @@ import Foundation
 import KeychainSwift
 
 /// Authentication storage protocol.
-public protocol AuthenticationStorage: class {
+public protocol AuthenticationStorage: AnyObject {
 
     init(storageKey: String)
     var accessToken: String? { get set }

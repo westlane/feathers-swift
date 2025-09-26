@@ -8,10 +8,9 @@
 
 import Foundation
 import ReactiveSwift
-import Result
 
 /// Abstract interface for a provider.
-public protocol Provider: class {
+public protocol Provider: AnyObject {
 
     /// Provider's base url.
     var baseURL: URL { get }
@@ -53,14 +52,14 @@ public protocol Provider: class {
     ///   - callback: Event callback. Called every time an event sends.
     ///
     /// - warning: Events will continue to emit until `off` is called.
-    func on(event: String) -> Signal<[String: Any], NoError>
+    func on(event: String) -> Signal<[String: Any], Never>
 
     /// Register for single-use handler for the event.
     ///
     /// - Parameters:
     ///   - event: Event name.
     ///   - callback: Event callback, only called once.
-    func once(event: String) -> Signal<[String: Any], NoError>
+    func once(event: String) -> Signal<[String: Any], Never>
 
     /// Unregister for an event. Must be called to end the stream.
     ///

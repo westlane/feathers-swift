@@ -9,7 +9,7 @@
 import Feathers
 import Foundation
 import ReactiveSwift
-import enum Result.NoError
+// import enum Result.NoError
 
 class StubProvider: Provider {
 
@@ -43,12 +43,12 @@ class StubProvider: Provider {
         return SignalProducer(value: Response(pagination: nil, data: .object([:])))
     }
 
-    public func on(event: String) -> Signal<[String: Any], NoError> {
+    public func on(event: String) -> Signal<[String: Any], Never> {
         // no-op
         return .empty
     }
 
-    public func once(event: String) -> Signal<[String: Any], NoError> {
+    public func once(event: String) -> Signal<[String: Any], Never> {
         return .empty
     }
 

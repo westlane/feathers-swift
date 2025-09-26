@@ -25,11 +25,11 @@ public class ProviderService: Service {
         return provider.request(endpoint: endpoint)
     }
     
-    override public func on(event: String) -> Signal<[String: Any], NoError> {
+    override public func on(event: String) -> Signal<[String: Any], Never> {
         return app?.provider.on(event: "\(path) \(event)") ?? .never
     }
 
-    override public func once(event: String) -> Signal<[String: Any], NoError> {
+    override public func once(event: String) -> Signal<[String: Any], Never> {
         return app?.provider.once(event: "\(path) \(event)") ?? .never
     }
 

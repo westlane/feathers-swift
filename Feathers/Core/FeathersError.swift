@@ -20,7 +20,7 @@ public struct AnyFeathersError: Error {
     
     public init(_ error: FeathersError) {
         if let anyError = error as? AnyFeathersError {
-            self = anyError
+            self.error = anyError.error
         } else {
             self.error = error
         }

@@ -26,11 +26,14 @@ public class ProviderService: Service {
     }
     
     override public func on(event: String) -> Signal<[String: Any], Never> {
-        return app?.provider.on(event: "\(path) \(event)") ?? .never
+        // Modern FeathersJS v4+ emits events without service path prefix
+        // Events are just: "created", "patched", "updated", "removed"
+        return app?.provider.on(event: event) ?? .never
     }
 
     override public func once(event: String) -> Signal<[String: Any], Never> {
-        return app?.provider.once(event: "\(path) \(event)") ?? .never
+        // Modern FeathersJS v4+ emits events without service path prefix
+        return app?.provider.once(event: event) ?? .never
     }
 
     override public func off(event: String) {

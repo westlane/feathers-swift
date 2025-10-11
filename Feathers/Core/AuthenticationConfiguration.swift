@@ -27,6 +27,10 @@ public struct AuthenticationConfiguration {
 
     // The key to store the accessToken with.
     public let storageKey: String
+    
+    /// Whether to use secure keychain storage (true) or in-memory storage (false)
+    /// Default is true for production, set to false for demos/testing to avoid keychain prompts
+    public let useSecureStorage: Bool
 
     public init(
         header: String = "Authorization",
@@ -34,12 +38,14 @@ public struct AuthenticationConfiguration {
         jwtStrategy: String = "jwt",
         entity: String = "user",
         service: String = "users",
-        storageKey: String = "feathers-jwt") {
+        storageKey: String = "feathers-jwt",
+        useSecureStorage: Bool = true) {
         self.header = header
         self.path = path
         self.jwtStrategy = jwtStrategy
         self.entity = entity
         self.service = service
         self.storageKey = storageKey
+        self.useSecureStorage = useSecureStorage
     }
 }

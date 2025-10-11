@@ -26,8 +26,11 @@ public final class EncryptedAuthenticationStore: AuthenticationStorage {
     public var accessToken: String? {
         get { return keychain.get(storageKey) }
         set {
-            guard let value = newValue else { return }
-            keychain.set(value, forKey: storageKey)
+            if let value = newValue {
+                keychain.set(value, forKey: storageKey)
+            } else {
+                keychain.delete(storageKey)
+            }
         }
     }
 
@@ -35,4 +38,21 @@ public final class EncryptedAuthenticationStore: AuthenticationStorage {
         self.storageKey = storageKey
     }
 
+}
+
+/// An in-memory authentication store. Simple storage for demos/testing that doesn't require keychain.
+public final class InMemoryAuthenticationStore: AuthenticationStorage {
+    
+    private var token: String?
+    private let storageKey: String
+    
+    public var accessToken: String? {
+        get { return token }
+        set { token = newValue }
+    }
+    
+    public init(storageKey: String = "feathers-jwt") {
+        self.storageKey = storageKey
+    }
+    
 }

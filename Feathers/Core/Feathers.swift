@@ -16,7 +16,7 @@ public final class Feathers {
     public let provider: Provider
     
     /// Authentication store.
-    private(set) public var authenticationStorage: AuthenticationStorage = EncryptedAuthenticationStore()
+    public var authenticationStorage: AuthenticationStorage = EncryptedAuthenticationStore()
     
     /// Authentication configuration.
     private(set) public var authenticationConfiguration = AuthenticationConfiguration()
@@ -68,7 +68,12 @@ public final class Feathers {
     /// - Parameter configuration: Authentication configuration object.
     public func configure(auth configuration: AuthenticationConfiguration) {
         authenticationConfiguration = configuration
-        authenticationStorage = EncryptedAuthenticationStore(storageKey: configuration.storageKey)
+        // Use the appropriate storage based on configuration
+        if configuration.useSecureStorage {
+            authenticationStorage = EncryptedAuthenticationStore(storageKey: configuration.storageKey)
+        } else {
+            authenticationStorage = InMemoryAuthenticationStore(storageKey: configuration.storageKey)
+        }
     }
     
     /// Authenticate the application.

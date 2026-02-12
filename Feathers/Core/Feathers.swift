@@ -23,6 +23,9 @@ public final class Feathers {
     
     private var services: [String: ServiceType] = [:]
     
+    private let servicesQueue =
+        DispatchQueue(label: "com.accord-core.services", attributes: .concurrent)
+    
     /// Feather's initializer.
     ///
     /// - Parameter provider: Transport provider.
@@ -38,24 +41,46 @@ public final class Feathers {
     ///
     /// - Parameter path: Service path.
     /// - Returns: Service object.
+    ///
     public func service(path: String) -> ServiceType {
         let servicePath = path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-        guard let service = services[servicePath] else {
-            // If no service has been registered or requested for at this path,
-            // create one around the transport provider.
-            let providerService = ProviderService(provider: provider)
-            providerService.setup(app: self, path: servicePath)
-            // Store it so the service is retained and hooks can be registered.
-            services[servicePath] = providerService
-            // Create the wrapper
-            let wrapper = ServiceWrapper(service: providerService)
+
+        if let existing = servicesQueue.sync(execute: { services[servicePath] }) {
+            let wrapper = ServiceWrapper(service: existing)
             wrapper.setup(app: self, path: servicePath)
             return wrapper
         }
-        let wrapper = ServiceWrapper(service: service)
+
+        let providerService = ProviderService(provider: provider)
+        providerService.setup(app: self, path: servicePath)
+
+        servicesQueue.async(flags: .barrier) {
+            self.services[servicePath] = providerService
+        }
+
+        let wrapper = ServiceWrapper(service: providerService)
         wrapper.setup(app: self, path: servicePath)
         return wrapper
     }
+    
+//    public func service(path: String) -> ServiceType {
+//        let servicePath = path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+//        guard let service = services[servicePath] else {
+//            // If no service has been registered or requested for at this path,
+//            // create one around the transport provider.
+//            let providerService = ProviderService(provider: provider)
+//            providerService.setup(app: self, path: servicePath)
+//            // Store it so the service is retained and hooks can be registered.
+//            services[servicePath] = providerService
+//            // Create the wrapper
+//            let wrapper = ServiceWrapper(service: providerService)
+//            wrapper.setup(app: self, path: servicePath)
+//            return wrapper
+//        }
+//        let wrapper = ServiceWrapper(service: service)
+//        wrapper.setup(app: self, path: servicePath)
+//        return wrapper
+//    }
     
     public func use(path: String, service: ServiceType) {
         let servicePath = path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))

@@ -22,6 +22,7 @@ public final class Feathers {
     private(set) public var authenticationConfiguration = AuthenticationConfiguration()
     
     private var services: [String: ServiceType] = [:]
+    private let servicesLock = NSLock()
     
     private let servicesQueue =
         DispatchQueue(label: "com.accord-core.services", attributes: .concurrent)
@@ -59,6 +60,19 @@ public final class Feathers {
         }
 
         let wrapper = ServiceWrapper(service: providerService)
+        servicesLock.lock()
+        let existing = services[servicePath]
+        if existing == nil {
+            let providerService = ProviderService(provider: provider)
+            providerService.setup(app: self, path: servicePath)
+            services[servicePath] = providerService
+            servicesLock.unlock()
+            let wrapper = ServiceWrapper(service: providerService)
+            wrapper.setup(app: self, path: servicePath)
+            return wrapper
+        }
+        servicesLock.unlock()
+        let wrapper = ServiceWrapper(service: existing!)
         wrapper.setup(app: self, path: servicePath)
         return wrapper
     }
@@ -85,7 +99,9 @@ public final class Feathers {
     public func use(path: String, service: ServiceType) {
         let servicePath = path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
         service.setup(app: self, path: servicePath)
+        servicesLock.lock()
         services[servicePath] = service
+        servicesLock.unlock()
     }
     
     /// Configure any authentication options.

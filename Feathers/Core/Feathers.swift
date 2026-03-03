@@ -72,29 +72,11 @@ public final class Feathers {
             return wrapper
         }
         servicesLock.unlock()
-        let wrapper = ServiceWrapper(service: existing!)
-        wrapper.setup(app: self, path: servicePath)
-        return wrapper
+        let existingWrapper = ServiceWrapper(service: existing!)
+        existingWrapper.setup(app: self, path: servicePath)
+        return existingWrapper
     }
     
-//    public func service(path: String) -> ServiceType {
-//        let servicePath = path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-//        guard let service = services[servicePath] else {
-//            // If no service has been registered or requested for at this path,
-//            // create one around the transport provider.
-//            let providerService = ProviderService(provider: provider)
-//            providerService.setup(app: self, path: servicePath)
-//            // Store it so the service is retained and hooks can be registered.
-//            services[servicePath] = providerService
-//            // Create the wrapper
-//            let wrapper = ServiceWrapper(service: providerService)
-//            wrapper.setup(app: self, path: servicePath)
-//            return wrapper
-//        }
-//        let wrapper = ServiceWrapper(service: service)
-//        wrapper.setup(app: self, path: servicePath)
-//        return wrapper
-//    }
     
     public func use(path: String, service: ServiceType) {
         let servicePath = path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))

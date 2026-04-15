@@ -18,16 +18,27 @@ public protocol AuthenticationStorage: AnyObject {
 }
 
 /// An encrypted authentication store. Uses the keychain to store a token.
+/// Session cache: token is read from keychain once per session to avoid repeated keychain prompts.
+/// Cache is cleared on set(nil) (logout) so next access requires keychain again.
 public final class EncryptedAuthenticationStore: AuthenticationStorage {
 
     private let keychain = KeychainSwift()
     private let storageKey: String
+    /// Session cache so we only hit keychain once; cleared when token is set to nil (logout).
+    private var _cachedToken: String?
 
     public var accessToken: String? {
-        get { return keychain.get(storageKey) }
+        get {
+            if let cached = _cachedToken { return cached }
+            let value = keychain.get(storageKey)
+            _cachedToken = value
+            return value
+        }
         set {
+            _cachedToken = nil
             if let value = newValue {
                 keychain.set(value, forKey: storageKey)
+                _cachedToken = value
             } else {
                 keychain.delete(storageKey)
             }

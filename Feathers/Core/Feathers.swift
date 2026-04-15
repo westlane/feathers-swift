@@ -15,7 +15,7 @@ public final class Feathers {
     /// Transport provider.
     public let provider: Provider
     
-    /// Authentication store.
+    /// Authentication store (replaceable e.g. for app-specific keychain namespace).
     public var authenticationStorage: AuthenticationStorage = EncryptedAuthenticationStore()
     
     /// Authentication configuration.

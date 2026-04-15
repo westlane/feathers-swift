@@ -15,7 +15,7 @@ public final class Feathers {
     /// Transport provider.
     public let provider: Provider
     
-    /// Authentication store.
+    /// Authentication store (replaceable e.g. for app-specific keychain namespace).
     public var authenticationStorage: AuthenticationStorage = EncryptedAuthenticationStore()
     
     /// Authentication configuration.
@@ -23,10 +23,7 @@ public final class Feathers {
     
     private var services: [String: ServiceType] = [:]
     private let servicesLock = NSLock()
-    
-    private let servicesQueue =
-        DispatchQueue(label: "com.accord-core.services", attributes: .concurrent)
-    
+
     /// Feather's initializer.
     ///
     /// - Parameter provider: Transport provider.
@@ -42,41 +39,23 @@ public final class Feathers {
     ///
     /// - Parameter path: Service path.
     /// - Returns: Service object.
-    ///
     public func service(path: String) -> ServiceType {
         let servicePath = path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-
-        if let existing = servicesQueue.sync(execute: { services[servicePath] }) {
-            let wrapper = ServiceWrapper(service: existing)
-            wrapper.setup(app: self, path: servicePath)
-            return wrapper
-        }
-
-        let providerService = ProviderService(provider: provider)
-        providerService.setup(app: self, path: servicePath)
-
-        servicesQueue.async(flags: .barrier) {
-            self.services[servicePath] = providerService
-        }
-
-        let wrapper = ServiceWrapper(service: providerService)
         servicesLock.lock()
-        let existing = services[servicePath]
-        if existing == nil {
-            let providerService = ProviderService(provider: provider)
-            providerService.setup(app: self, path: servicePath)
-            services[servicePath] = providerService
+        if let existing = services[servicePath] {
+            let existingWrapper = ServiceWrapper(service: existing)
             servicesLock.unlock()
-            let wrapper = ServiceWrapper(service: providerService)
-            wrapper.setup(app: self, path: servicePath)
-            return wrapper
+            existingWrapper.setup(app: self, path: servicePath)
+            return existingWrapper
         }
+        let providerService = ProviderService(provider: provider)
+        services[servicePath] = providerService
         servicesLock.unlock()
-        let existingWrapper = ServiceWrapper(service: existing!)
-        existingWrapper.setup(app: self, path: servicePath)
-        return existingWrapper
+        providerService.setup(app: self, path: servicePath)
+        let wrapper = ServiceWrapper(service: providerService)
+        wrapper.setup(app: self, path: servicePath)
+        return wrapper
     }
-    
     
     public func use(path: String, service: ServiceType) {
         let servicePath = path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
@@ -91,12 +70,7 @@ public final class Feathers {
     /// - Parameter configuration: Authentication configuration object.
     public func configure(auth configuration: AuthenticationConfiguration) {
         authenticationConfiguration = configuration
-        // Use the appropriate storage based on configuration
-        if configuration.useSecureStorage {
-            authenticationStorage = EncryptedAuthenticationStore(storageKey: configuration.storageKey)
-        } else {
-            authenticationStorage = InMemoryAuthenticationStore(storageKey: configuration.storageKey)
-        }
+        authenticationStorage = EncryptedAuthenticationStore(storageKey: configuration.storageKey)
     }
     
     /// Authenticate the application.

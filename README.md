@@ -1,6 +1,8 @@
 # FeathersSwift
 
-[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](#carthage) [![CocoaPods compatible](https://img.shields.io/cocoapods/v/Feathers.svg)](#cocoapods) [![GitHub release](https://img.shields.io/github/release/feathersjs-ecosystem/feathers-swift.svg)](https://github.com/feathersjs-ecosystem/feathers-swift/releases) ![Swift 4.0.x](https://img.shields.io/badge/Swift-4.0.x-orange.svg) ![platforms](https://img.shields.io/badge/platform-iOS%20%7C%20macOS%20%7C%20tvOS%20%7C%20watchOS-lightgrey.svg) ![build](https://travis-ci.org/feathersjs-ecosystem/feathers-swift.svg?branch=master)
+> **Westlane fork:** Swift 6 maintenance lives on **`feat-swift6`**. `develop` tracks upstream.
+
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](#carthage) [![CocoaPods compatible](https://img.shields.io/cocoapods/v/Feathers.svg)](#cocoapods) [![GitHub release](https://img.shields.io/github/release/feathersjs-ecosystem/feathers-swift.svg)](https://github.com/feathersjs-ecosystem/feathers-swift/releases) ![Swift 6](https://img.shields.io/badge/Swift-6-orange.svg) ![platforms](https://img.shields.io/badge/platform-iOS%20%7C%20macOS%20%7C%20tvOS%20%7C%20watchOS-lightgrey.svg) ![build](https://travis-ci.org/feathersjs-ecosystem/feathers-swift.svg?branch=master)
 
 ![feathers](https://media.giphy.com/media/Fn8LZVVgTqXba/giphy.gif)
 
@@ -9,7 +11,7 @@
 FeathersSwift is a Cocoa networking library for interacting with a [FeathersJS](https://feathersjs.com/) backend.
 Why should you use it?
 
-* Swift 4 :thumbsup:
+* Swift 6
 * Network abstraction layer
 * Integrates seemlessly with any FeathersJS services
 * Supports iOS, macOS, tvOS, and watchOS

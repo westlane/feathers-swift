@@ -14,7 +14,7 @@ public protocol FeathersError: Swift.Error {
 }
 
 /// Type erase any errors
-public struct AnyFeathersError: Error {
+public struct AnyFeathersError: FeathersError {
     /// The underlying error.
     public let error: FeathersError
     
